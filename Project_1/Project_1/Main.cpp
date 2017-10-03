@@ -1,23 +1,31 @@
 #include <iostream>
 #include <vector>
-#include "Tx.h"
+#include <ctime>
+
 #include "Constants.h"
+#include "Tx.h"
+
 
 using namespace std;
 
-int Transmitting;
 int Time_Blocks;
+int Transmitting = 1; 	// "1" Line is OPEN "0" Line is BUSY
 
 int main()
 {
-	Transmitting = 1;	// "1" Line is OPEN "0" Line is BUSY
-
-	Tx A = Tx(rand() % 4);
-	Tx C = Tx(rand() % 4);
-
-	Time_Blocks = 0;
 	int A_stat;
 	int C_stat;
+
+	int lamda = 100;
+
+	int r1 = rand() % 4;
+	int r2 = rand() % 4;
+
+	srand(time(0));
+	Time_Blocks = 0;
+
+	Tx A = Tx(r1, lamda);
+	Tx C = Tx(r2, lamda);
 
 	while (Time_Blocks <= 500000)
 	{

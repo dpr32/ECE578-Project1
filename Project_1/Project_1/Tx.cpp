@@ -1,64 +1,61 @@
 #include <iostream>
 #include <math.h>
-#include "Tx.h"
+
 #include "Constants.h"
+#include "Main.h"
+#include "Tx.h"
 
 using namespace std;
 
+extern int Transmitting;
 
-Tx::Tx(int backOff, int lamda)
+Tx::Tx(int backOff, int lamda)    /*Constructor*/
 {
-	this->val_BO = backOff;
+	this->realTime = 0;
+	this->nextTime = 0;
+	
 	this->lamda = lamda;
+	this->val_BO = backOff;
 
+	generateTraffic(lamda, this->Traffic);
 }
 
-Tx::~Tx()
+Tx::~Tx()    /*Deconstructor*/
 {
 }
 
-void generateTraffic(vector<double> & v, int lamda)
+int Tx::recieveTime(double t)
 {
-	double sum = 0;
-	double temp = 0;
-	double tot = 0;
-	v.push_back(0);
-	for (int i = 1; i < 10 * lamda; ++i)
+	if (t == this->Traffic[0])
 	{
-		sum = 1 / (10 * lamda) + sum;
-		temp = (-1 / lamda) * log(1 - sum);
-		temp = temp * TIME_BLOCK;
-		tot += temp;
-		v.push_back(tot);	//time is in blocks!!
+		this->Queue.push(Traffic[0]);
+		Traffic.pop_back();
 	}
+
+	updateTime(t);
 }
 
-int recieveTime(int time)
+string Tx::sendMessage()
 {
 
 }
 
-string sendMessage()
+void Tx::backoff()
 {
 
 }
 
-void backoff()
+int Tx::transmit(int frames)
 {
 
 }
 
-int transmit(int frames)
+void Tx::collision(int col_num)
 {
 
 }
 
-int generateTraffic()
+void Tx::updateTime(double t)
 {
-
-}
-
-void collision(int col_num)
-{
-
+	this->realTime = t;
 }

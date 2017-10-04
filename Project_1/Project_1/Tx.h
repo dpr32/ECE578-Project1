@@ -9,28 +9,33 @@ using namespace std;
 
 class Tx
 {
+private:
+	int DIFS;
 	int lamda;
-	int DIFS = 2;
-	int val_BO = 0;
-	int numCollisions = 0;
+	int numCollisions;
 
 	queue<double> Queue;
 	vector<double> Traffic;
 
-	double SIFS = 0.5;
+	double SIFS;
+	double backOff;
+	double xfer_Time;
 	double realTime;
 	double nextTime;
 
+	bool sending;
+
 public:
 
-	Tx(int backOff, int lamda); //Constructor
+	Tx(int lamda); //Constructor
 	~Tx(); //Deconstructor
 
-	string sendMessage();
-	void backoff();
+	void sendMessage();
+	void setBackOff();
 	int transmit(int frames);
 	int recieveTime(double t);
-	void collision(int col_num);
+	void collision(double col_num);
 	void updateTime(double t);
-};
 
+	void printVector();	//Debugging
+};

@@ -2,42 +2,53 @@
 #include <vector>
 #include <ctime>
 
-#include "Constants.h"
 #include "Tx.h"
-
+#include "Main.h"
+#include "Constants.h"
 
 using namespace std;
 
-int Time_Blocks;
-int Transmitting = 1; 	// "1" Line is OPEN "0" Line is BUSY
+double Time_Block;
+
+bool Transmitting; 	// "false" Line is OPEN "true" Line is BUSY
 
 int main()
 {
 	int A_stat;
 	int C_stat;
 
-	int lamda = 100;
+	int numCollision = 0;
 
-	int r1 = rand() % 4;
-	int r2 = rand() % 4;
+	int tot_collisions = 0;
 
-	srand(time(0));
-	Time_Blocks = 0;
+	Time_Block = 0;
+	Transmitting = false;
 
-	Tx A = Tx(r1, lamda);
-	Tx C = Tx(r2, lamda);
+	Tx A = Tx(LAMDA_A);
+	Tx C = Tx(LAMDA_C);
 
-	while (Time_Blocks <= 500000)
+	while (Time_Block <= 500000)
 	{
-		A_stat = A.recieveTime(Time_Blocks);
-		C_stat = C.recieveTime(Time_Blocks);
+		A_stat = A.recieveTime(Time_Block);
+		C_stat = C.recieveTime(Time_Block);
 
-		if (A_stat == 0 && C_stat == 0) // Collision
+		if (A_stat == xmitting && C_stat == xmitting) // Collision
 		{
+			++numCollision;
+			++tot_collisions;
 
+			A.collision(numCollision);
+			C.collision(numCollision);
+		}
+		else if (A_stat == xmitting || C_stat == xmitting)
+		{
+			Transmitting = true;
+			numCollision = 0;
 		}
 
-		Time_Blocks += 0.1;
+		Time_Block += TIME_INC;
 	}
+
+	system("pause");
 
 }

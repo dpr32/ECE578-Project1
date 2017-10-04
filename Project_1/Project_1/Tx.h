@@ -10,20 +10,22 @@ using namespace std;
 class Tx
 {
 private:
-	int DIFS;
+	int DIFS_VAL;
 	int lamda;
+	int stat;
 	int numCollisions;
+	int ACK_VAL;
 
 	queue<double> Queue;
 	vector<double> Traffic;
 
-	double SIFS;
-	double backOff;
-	double xfer_Time;
-	double realTime;
-	double nextTime;
+	int SIFS_VAL;
+	int	 backOff_VAL;
+	int xfer_Time;
+	int realTime;
+	int nextTime;
 
-	bool sending;
+	
 
 public:
 

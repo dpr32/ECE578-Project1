@@ -8,47 +8,72 @@
 
 using namespace std;
 
-double Time_Block;
+double Current_Time;
 
 bool Transmitting; 	// "false" Line is OPEN "true" Line is BUSY
 
 int main()
 {
+
+	srand(time(0));
 	int A_stat;
 	int C_stat;
 
-	int numCollision = 0;
+	int consecutiveCollision = 0;
 
 	int tot_collisions = 0;
 
-	Time_Block = 0;
+	Current_Time = 0;
 	Transmitting = false;
 
 	Tx A = Tx(LAMDA_A);
 	Tx C = Tx(LAMDA_C);
 
-	while (Time_Block <= 500000)
+	while (Current_Time <= TIME_BLOCK)
 	{
-		A_stat = A.recieveTime(Time_Block);
-		C_stat = C.recieveTime(Time_Block);
+		A_stat = A.recieveTime(Current_Time);
+		C_stat = C.recieveTime(Current_Time);
 
-		if (A_stat == xmitting && C_stat == xmitting) // Collision
+		cout << "status of A: " << A_stat << endl;
+		cout << "status of B: " << C_stat << endl;
+
+		if (A_stat == SENDING && C_stat == SENDING) // Collision
 		{
-			++numCollision;
+			++consecutiveCollision;
 			++tot_collisions;
 
-			A.collision(numCollision);
-			C.collision(numCollision);
+			A.collision(consecutiveCollision);
+			C.collision(consecutiveCollision);
 		}
-		else if (A_stat == xmitting || C_stat == xmitting)
+		else if (A_stat == SENDING || C_stat == SENDING)
 		{
 			Transmitting = true;
-			numCollision = 0;
+			consecutiveCollision = 0;
 		}
 
-		Time_Block += TIME_INC;
+		Current_Time += TIME_INC;
 	}
+	cout << "Total collisions: " << tot_collisions;
 
 	system("pause");
 
 }
+
+
+void generateTraffic(int lamda, vector<double> & v)
+{
+	double sum = 0;
+	double temp = 0;
+	double tot = 0;
+	v.push_back(0);
+	for (int i = 1; i < 10 * lamda; ++i)
+	{
+		sum = 1.0 / (10 * lamda) + sum;
+		temp = (-1.0 / lamda) * log(1.0 - sum) * TIME_BLOCK;
+		temp = round(temp);
+		tot += temp;
+
+		v.push_back(tot);	//time is in blocks!!
+	}
+}
+

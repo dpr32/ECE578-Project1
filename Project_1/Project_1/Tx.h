@@ -10,34 +10,34 @@ using namespace std;
 class Tx
 {
 private:
-	int DIFS_VAL;
-	int lamda;
 	int stat;
+	int lamda;
+	int ACK_val;
+	int DIFS_val;
+	int SIFS_val;
+	int xfer_Time;
+	int	backOff_val;
 	int numCollisions;
-	int ACK_VAL;
+	int collisionTime;
 
 	queue<double> Queue;
 	vector<double> Traffic;
 
-	int SIFS_VAL;
-	int	 backOff_VAL;
-	int xfer_Time;
-	int realTime;
-	int nextTime;
-
-	
+	int numAck;
 
 public:
 
-	Tx(int lamda); //Constructor
-	~Tx(); //Deconstructor
+	Tx(int lamda);	//Constructor
+	~Tx();			//Deconstructor
 
-	void sendMessage();
-	void setBackOff();
-	int transmit(int frames);
+	int getNumACK();
 	int recieveTime(double t);
-	void collision(double col_num);
-	void updateTime(double t);
 
+	void setBackOff();
+	void sendMessage();
+	void setCollisionTime();
+	void resetVariables(bool BO);
+	void collision(double col_num);
+	
 	void printVector();	//Debugging
 };

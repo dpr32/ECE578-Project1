@@ -9,18 +9,18 @@ using namespace std;
 
 Tx::Tx(int lamda)    /*Constructor*/
 {
-	this->DIFS_VAL = DIFS_ORIGINAL;
-	this->SIFS_VAL = SIFS_ORIGINAL;
-	this->realTime = 0;
-	this->nextTime = 0;
-	this->xfer_Time = DATA_FRAME_SIZE;
-	this->numCollisions = 0;
 	this->stat = QUE;
-	this->ACK_VAL = ACK_ORIGINAL;
 	this->lamda = lamda;
+	this->ACK_val = ACK_ORIGINAL;
+	this->DIFS_val = DIFS_ORIGINAL;
+	this->SIFS_val = SIFS_ORIGINAL;
+	this->xfer_Time = DATA_FRAME_SIZE;
 
+	this->numAck = 0;
+	this->numCollisions = 0;
 
 	setBackOff();
+	setCollisionTime();
 	generateTraffic(lamda, this->Traffic);
 }
 
@@ -30,15 +30,13 @@ Tx::~Tx()    /*Deconstructor*/
 
 int Tx::recieveTime(double t)
 {
-	if(t == this ->Traffic[0])
+	if(t == this->Traffic[0])
 	{
 		this->Queue.push(Traffic[0]);
 		Traffic.erase(Traffic.begin());
 	}
 
 	while (1)
-
-
 	{
 		switch (stat)
 		{
@@ -53,9 +51,9 @@ int Tx::recieveTime(double t)
 			{
 
 
-				if (DIFS_VAL != 0)
+				if (DIFS_val != 0)
 				{
-					DIFS_VAL -= TIME_INC;
+					DIFS_val -= TIME_INC;
 					return stat;
 				}
 				else
@@ -67,9 +65,9 @@ int Tx::recieveTime(double t)
 		case BACKOFF:
 			if (!Transmitting)
 			{
-				if (backOff_VAL != 0)
+				if (backOff_val != 0)
 				{
-					backOff_VAL -= TIME_INC;
+					backOff_val -= TIME_INC;
 					return stat;
 				}
 				else
@@ -79,8 +77,7 @@ int Tx::recieveTime(double t)
 				}
 			}
 			else
-				return stat;
-
+				stat = FREEZE;
 			break;
 		case SENDING:
 			if (xfer_Time != 0)
@@ -92,41 +89,50 @@ int Tx::recieveTime(double t)
 				stat = SIFS;
 			break;
 		case SIFS:
-			if (SIFS_VAL != 0)
+			if (SIFS_val != 0)
 			{
-				SIFS_VAL -= TIME_INC;
+				SIFS_val -= TIME_INC;
 				return stat;
 			}
 			else
 				stat = ACK;
 			break;
 		case ACK:
-			if (ACK_VAL != 0)
+			if (ACK_val != 0)
 			{
-				ACK_VAL -= TIME_INC;
+				ACK_val -= TIME_INC;
 				return stat;
 			}
 			else
 			{
 				Transmitting = false;
 				Queue.pop();
+				resetVariables(true);
 
-				DIFS_VAL = DIFS_ORIGINAL;	// Reset variables
-				SIFS_VAL = SIFS_ORIGINAL;
-				xfer_Time = DATA_FRAME_SIZE;
-				ACK_VAL = ACK_ORIGINAL;
-				setBackOff();
-
+				++numAck;
 				stat = QUE;
 			}
 			break;
 		case FREEZE:
 			if (!Transmitting)
 			{
+				DIFS_val = DIFS_ORIGINAL;
 				stat = DIFS;
 			}
 			else
 				return stat;
+			break;
+		case COLLISION:
+			if (this->collisionTime > TIME_INC)
+			{
+				collisionTime -= TIME_INC;
+				return stat;
+			}
+			else
+			{
+				resetVariables(false);
+				stat = DIFS;
+			}
 			break;
 		}
 	}
@@ -137,47 +143,48 @@ int Tx::recieveTime(double t)
 
 void Tx::sendMessage()
 {
-	
-
 	this->xfer_Time = DATA_FRAME_SIZE + SIFS + ACK;	// slots
 }
 
 void Tx::setBackOff()
 {
-	
-
-	this->backOff_VAL = rand() % (CWo - 1);
-}
-
-int Tx::transmit(int frames)
-{
-	return 0;
+	this->backOff_val = rand() % (CWo - 1);
 }
 
 void Tx::collision(double k)
 {
-	
 	if (k>10)
-	{
 		k = 10;
-	}
 		
 	int CW = ((int)pow(2.0, k) * CWo - 1);
 
 	if (CW > CWmax)
 		CW = CWmax;
 
-	this->backOff_VAL = rand() % CW;
-	DIFS_VAL = DIFS_ORIGINAL;	// Reset variables
+	this->backOff_val = rand() % CW;
+	DIFS_val = DIFS_ORIGINAL;	// Reset variables
 	stat = DIFS;
-
-
-
 }
 
-void Tx::updateTime(double t)
+void Tx::setCollisionTime()
 {
-	this->realTime = t;
+	this->collisionTime = SIFS_ORIGINAL + DATA_FRAME_SIZE + ACK_ORIGINAL;
+}
+
+void Tx::resetVariables(bool BO)
+{
+	DIFS_val = DIFS_ORIGINAL;	// Reset variables
+	SIFS_val = SIFS_ORIGINAL;
+	xfer_Time = DATA_FRAME_SIZE;
+	ACK_val = ACK_ORIGINAL;
+	if (BO)
+		setBackOff();
+	setCollisionTime();
+}
+
+int Tx::getNumACK()
+{
+	return this->numAck;
 }
 
 void Tx::printVector()    //Debugging to verify Traffic Generator

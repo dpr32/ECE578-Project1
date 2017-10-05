@@ -34,9 +34,6 @@ int main()
 		A_stat = A.recieveTime(Current_Time);
 		C_stat = C.recieveTime(Current_Time);
 
-		cout << "status of A: " << A_stat << endl;
-		cout << "status of B: " << C_stat << endl;
-
 		if (A_stat == SENDING && C_stat == SENDING) // Collision
 		{
 			++consecutiveCollision;
@@ -53,7 +50,9 @@ int main()
 
 		Current_Time += TIME_INC;
 	}
-	cout << "Total collisions: " << tot_collisions;
+	cout << "Total collisions: " << tot_collisions << endl;
+	cout << "Total A Xmissions: " << A.getNumACK() << endl;
+	cout << "Total C Xmissions: " << C.getNumACK() << endl;
 
 	system("pause");
 
@@ -62,16 +61,19 @@ int main()
 
 void generateTraffic(int lamda, vector<double> & v)
 {
-	double sum = 0;
-	double temp = 0;
+	double u = 0;
+	double x = 0;
+	double x_sec = 0;
 	double tot = 0;
 	v.push_back(0);
-	for (int i = 1; i < 10 * lamda; ++i)
+	while (x_sec < 10)
 	{
-		sum = 1.0 / (10 * lamda) + sum;
-		temp = (-1.0 / lamda) * log(1.0 - sum) * TIME_BLOCK;
-		temp = round(temp);
-		tot += temp;
+		u = (rand() % 1000) / 1000.0;
+		x = (-1.0 / lamda) * log(1.0 - u);
+		x_sec += x;
+		x *= 200000;
+		x = round(x);
+		tot += x;
 
 		v.push_back(tot);	//time is in blocks!!
 	}

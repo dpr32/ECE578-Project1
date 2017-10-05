@@ -26,22 +26,18 @@ private:
 	int nextTime;
 
 	
-	int numCollisions;
-	int numAck;
 
 public:
 
-	Tx(int lamda);	//Constructor
-	~Tx();			//Deconstructor
+	Tx(int lamda); //Constructor
+	~Tx(); //Deconstructor
 
-	int getNumACK();
-	void setBackOff();
 	void sendMessage();
-	void setCollisionTime();
+	void setBackOff();
+	int transmit(int frames);
 	int recieveTime(double t);
 	void collision(double col_num);
-	void resetVariables(bool BO);
-
+	void updateTime(double t);
 
 	void printVector();	//Debugging
 };

@@ -19,6 +19,5 @@ enum status {
 	DIFS,
 	SENDING,
 	ACK,
-	FREEZE,
-	COLLISION
+	FREEZE
 };

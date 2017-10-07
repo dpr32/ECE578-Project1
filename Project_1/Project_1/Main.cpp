@@ -72,11 +72,11 @@ void generateTraffic(int lamda, vector<double> & v)
 		u = (rand() % 1000) / 1000.0;
 		x = (-1.0 / lamda) * log(1.0 - u);
 		x_sec += x;
-		x *= 200000;
+		x = x * 1000000 / 10;  // slots [ ( x sec * 1000000 microsec/sec) / 10 microsec/slots ]
 		x = round(x);
 		tot += x;
 
-		v.push_back(tot);	//time is in blocks!!
+		v.push_back(tot);	//time is in slots!!
 	}
 }
 

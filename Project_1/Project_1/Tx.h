@@ -13,6 +13,8 @@ private:
 	int stat;
 	int lamda;
 	int ACK_val;
+	int RTS_val;
+	int CTS_val;
 	int DIFS_val;
 	int SIFS_val;
 	int xfer_Time;
@@ -36,6 +38,7 @@ public:
 	void setBackOff();
 	void sendMessage();
 	void setCollisionTime();
+	void setState(int state);
 	void resetVariables(bool BO);
 	void collision(double col_num);
 	

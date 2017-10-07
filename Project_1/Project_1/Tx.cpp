@@ -12,6 +12,8 @@ Tx::Tx(int lamda)    /*Constructor*/
 	this->stat = QUE;
 	this->lamda = lamda;
 	this->ACK_val = ACK_ORIGINAL;
+	this->CTS_val = CTS_ORIGINAL;
+	this->RTS_val = RTS_ORIGINAL;
 	this->DIFS_val = DIFS_ORIGINAL;
 	this->SIFS_val = SIFS_ORIGINAL;
 	this->xfer_Time = DATA_FRAME_SIZE;
@@ -71,10 +73,7 @@ int Tx::recieveTime(double t)
 					return stat;
 				}
 				else
-				{
-					sendMessage();
-					stat = SENDING;
-				}
+					stat = RTS;
 			}
 			else
 				stat = FREEZE;
@@ -134,6 +133,27 @@ int Tx::recieveTime(double t)
 				stat = DIFS;
 			}
 			break;
+		case RTS:
+			if (RTS_val != 0)
+			{
+				RTS_val -= TIME_INC;
+				return stat;
+			}
+			else
+				stat = CTS;
+			break;
+		case CTS:
+			if (CTS_val != 0)
+			{
+				CTS_val -= TIME_INC;
+				return stat;
+			}
+			else
+			{
+				sendMessage();
+				stat = SENDING;
+			}
+			break;
 		}
 	}
 	//updateTime(t);
@@ -185,6 +205,11 @@ void Tx::resetVariables(bool BO)
 int Tx::getNumACK()
 {
 	return this->numAck;
+}
+
+void Tx::setState(int state)
+{
+	this->stat = state;
 }
 
 void Tx::printVector()    //Debugging to verify Traffic Generator

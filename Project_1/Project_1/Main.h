@@ -20,5 +20,7 @@ enum status {
 	SENDING,
 	ACK,
 	FREEZE,
-	COLLISION
+	COLLISION,
+	RTS,
+	CTS
 };

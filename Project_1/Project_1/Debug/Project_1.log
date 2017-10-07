@@ -1,4 +1,8 @@
-﻿  Main.cpp
+﻿  Tx.cpp
+c:\users\devan\documents\github\ece578-project1\project_1\project_1\tx.cpp(192): warning C4018: '<': signed/unsigned mismatch
+  Main.cpp
 c:\users\devan\documents\github\ece578-project1\project_1\project_1\main.cpp(18): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  Generating Code...
+  LINK : C:\Users\Devan\Documents\GitHub\ECE578-Project1\Project_1\Debug\Project_1.exe not found or not built by the last incremental link; performing full link
   Project_1.vcxproj -> C:\Users\Devan\Documents\GitHub\ECE578-Project1\Project_1\Debug\Project_1.exe
   Project_1.vcxproj -> C:\Users\Devan\Documents\GitHub\ECE578-Project1\Project_1\Debug\Project_1.pdb (Partial PDB)

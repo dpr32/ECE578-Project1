@@ -143,7 +143,7 @@ int Tx::recieveTime(double t)
 
 void Tx::sendMessage()
 {
-	this->xfer_Time = DATA_FRAME_SIZE + SIFS + ACK;	// slots
+	this->xfer_Time = DATA_FRAME_SIZE;	// slots
 }
 
 void Tx::setBackOff()

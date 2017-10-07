@@ -34,15 +34,15 @@ int main()
 		A_stat = A.recieveTime(Current_Time);
 		C_stat = C.recieveTime(Current_Time);
 
-		if (A_stat == SENDING && C_stat == SENDING) // Collision
+		if (A_stat == RTS && C_stat == RTS) // Collision
 		{
 			++consecutiveCollision;
 			++tot_collisions;
-
+			
 			A.collision(consecutiveCollision);
 			C.collision(consecutiveCollision);
 		}
-		else if (A_stat == SENDING || C_stat == SENDING)
+		else if (A_stat == CTS || C_stat == RTS)
 		{
 			Transmitting = true;
 			consecutiveCollision = 0;

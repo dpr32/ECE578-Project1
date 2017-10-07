@@ -183,17 +183,19 @@ void Tx::collision(double k)
 
 	this->backOff_val = rand() % CW;
 	DIFS_val = DIFS_ORIGINAL;	// Reset variables
-	stat = DIFS;
+	stat = COLLISION;
 }
 
 void Tx::setCollisionTime()
 {
-	this->collisionTime = SIFS_ORIGINAL + DATA_FRAME_SIZE + ACK_ORIGINAL;
+	this->collisionTime = SIFS_ORIGINAL + DATA_FRAME_SIZE + ACK_ORIGINAL + CTS_ORIGINAL + this->RTS_val;
 }
 
 void Tx::resetVariables(bool BO)
 {
-	DIFS_val = DIFS_ORIGINAL;	// Reset variables
+	RTS_val = RTS_ORIGINAL;		// Reset variables
+	CTS_val = CTS_ORIGINAL;
+	DIFS_val = DIFS_ORIGINAL;	
 	SIFS_val = SIFS_ORIGINAL;
 	xfer_Time = DATA_FRAME_SIZE;
 	ACK_val = ACK_ORIGINAL;

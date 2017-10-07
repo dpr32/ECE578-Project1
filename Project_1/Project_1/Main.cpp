@@ -21,39 +21,59 @@ int main()
 
 	int consecutiveCollision = 0;
 
+	int runtimes = 10;
+	int Ave_collisions = 0;
+	int ave_through_A = 0;
+	int ave_through_C = 0;
+
 	int tot_collisions = 0;
 
 	Current_Time = 0;
 	Transmitting = false;
 
-	Tx A = Tx(LAMDA_A);
-	Tx C = Tx(LAMDA_C);
+	Tx* A;
 
-	while (Current_Time <= TIME_BLOCK)
+	Tx* C;
+
+	for (int i = 0; i < runtimes; ++i)
 	{
-		A_stat = A.recieveTime(Current_Time);
-		C_stat = C.recieveTime(Current_Time);
+		A = new Tx(LAMDA_A);
+		C = new Tx(LAMDA_C);
+		Current_Time = 0;
 
-		if (A_stat == RTS && C_stat == RTS) // Collision
+		while (Current_Time <= TIME_BLOCK)
 		{
-			++consecutiveCollision;
-			++tot_collisions;
+			A_stat = A->recieveTime(Current_Time);
+			C_stat = C->recieveTime(Current_Time);
+
+			if (A_stat == RTS && C_stat == RTS) // Collision
+			{
+				++consecutiveCollision;
+				++tot_collisions;
 			
-			A.collision(consecutiveCollision);
-			C.collision(consecutiveCollision);
-		}
-		else if (A_stat == CTS || C_stat == CTS)
-		{
-			Transmitting = true;
-			consecutiveCollision = 0;
+				A->collision(consecutiveCollision);
+				C->collision(consecutiveCollision);
+			}
+			else if (A_stat == CTS || C_stat == CTS)
+			{
+				Transmitting = true;
+				consecutiveCollision = 0;
+			}
+
+			Current_Time += TIME_INC;
 		}
 
-		Current_Time += TIME_INC;
+		ave_through_A += A->getNumACK();
+		ave_through_C += C->getNumACK();
+		delete(A);
+		delete(C);
+		A = NULL;
+		C - NULL;
 	}
 
-	cout << "Total collisions: " << tot_collisions << endl;
-	cout << "Total A Xmissions: " << A.getNumACK() << endl;
-	cout << "Total C Xmissions: " << C.getNumACK() << endl;
+	cout << "Total collisions: " << (tot_collisions / runtimes) << endl;
+	cout << "Total A Xmissions: " << (ave_through_A / runtimes) << endl;
+	cout << "Total C Xmissions: " << (ave_through_C / runtimes) << endl;
 
 	system("pause");
 

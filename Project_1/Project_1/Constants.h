@@ -12,8 +12,8 @@ const int TIME_INC = 1;		    // slots
 const int DIFS_ORIGINAL = 2;	// 20 microseconds (us)
 const int SIFS_ORIGINAL = 1;	// 10 microseconds (us)
 
-const int LAMDA_A = 50; // frames/sec
-const int LAMDA_C = 50; // frames/sec
+const int LAMDA_A = 300; // frames/sec
+const int LAMDA_C = 600; // frames/sec
 
 const int DATA_FRAME_SIZE = 200; // slots [ (1500 bytes * 8 / 6 Mbps) = 2000 microseconds ]
 

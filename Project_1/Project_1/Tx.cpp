@@ -51,8 +51,6 @@ int Tx::recieveTime(double t)
 		case DIFS:
 			if (!Transmitting)
 			{
-
-
 				if (DIFS_val != 0)
 				{
 					DIFS_val -= TIME_INC;

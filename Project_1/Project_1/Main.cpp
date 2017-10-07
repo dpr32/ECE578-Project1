@@ -42,7 +42,7 @@ int main()
 			A.collision(consecutiveCollision);
 			C.collision(consecutiveCollision);
 		}
-		else if (A_stat == CTS || C_stat == RTS)
+		else if (A_stat == CTS || C_stat == CTS)
 		{
 			Transmitting = true;
 			consecutiveCollision = 0;

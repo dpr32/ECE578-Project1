@@ -162,8 +162,8 @@ void Tx::collision(double k)
 		CW = CWmax;
 
 	this->backOff_val = rand() % CW;
-	DIFS_val = DIFS_ORIGINAL;	// Reset variables
-	stat = DIFS;
+
+	stat = COLLISION;
 }
 
 void Tx::setCollisionTime()

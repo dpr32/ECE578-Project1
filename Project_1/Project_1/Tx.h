@@ -19,6 +19,9 @@ private:
 	int	backOff_val;
 	int numCollisions;
 	int collisionTime;
+	int consecutiveCollision;
+
+	bool transCollision;
 
 	queue<double> Queue;
 	vector<double> Traffic;
@@ -34,10 +37,12 @@ public:
 	int recieveTime(double t);
 
 	void setBackOff();
-	void sendMessage();
-	void setCollisionTime();
+	void setMessageSize();
+	int getCollisionNumber();
 	void resetVariables(bool BO);
-	void collision(double col_num);
+	void collisionBackOff(double col_num);
 	
+	void setCollisionVariable(bool col);
+
 	void printVector();	//Debugging
 };

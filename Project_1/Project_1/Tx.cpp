@@ -15,12 +15,14 @@ Tx::Tx(int lamda)    /*Constructor*/
 	this->DIFS_val = DIFS_ORIGINAL;
 	this->SIFS_val = SIFS_ORIGINAL;
 	this->xfer_Time = DATA_FRAME_SIZE;
+	this->consecutiveCollision = 0;
+
 
 	this->numAck = 0;
 	this->numCollisions = 0;
 
 	setBackOff();
-	setCollisionTime();
+	setMessageSize();
 	generateTraffic(lamda, this->Traffic);
 }
 
@@ -47,37 +49,25 @@ int Tx::recieveTime(double t)
 				return stat;
 			break;
 		case DIFS:
-			if (!Transmitting)
+			if (DIFS_val != 0)
 			{
-
-
-				if (DIFS_val != 0)
-				{
-					DIFS_val -= TIME_INC;
-					return stat;
-				}
-				else
-					stat = BACKOFF;
-				break;
-			}
-			stat = FREEZE;
-			break;
-		case BACKOFF:
-			if (!Transmitting)
-			{
-				if (backOff_val != 0)
-				{
-					backOff_val -= TIME_INC;
-					return stat;
-				}
-				else
-				{
-					sendMessage();
-					stat = SENDING;
-				}
+				DIFS_val -= TIME_INC;
+				return stat;
 			}
 			else
-				stat = FREEZE;
+				stat = BACKOFF;
+			break;
+		case BACKOFF:
+			if (backOff_val != 0)
+			{
+				backOff_val -= TIME_INC;
+				return stat;
+			}
+			else
+			{
+				setMessageSize();
+				stat = SENDING;
+			}
 			break;
 		case SENDING:
 			if (xfer_Time != 0)
@@ -105,45 +95,33 @@ int Tx::recieveTime(double t)
 			}
 			else
 			{
-				Transmitting = false;
-				Queue.pop();
-				resetVariables(true);
-
-				++numAck;
+				if (transCollision)
+				{
+					++numCollisions;
+					++consecutiveCollision;
+					collisionBackOff(consecutiveCollision);
+					resetVariables(false);
+				}
+				else
+				{
+					consecutiveCollision = 0;
+					Queue.pop();
+					resetVariables(true);
+					++numAck;
+				}
+				setCollisionVariable(false);
 				stat = QUE;
-			}
-			break;
-		case FREEZE:
-			if (!Transmitting)
-			{
-				DIFS_val = DIFS_ORIGINAL;
-				stat = DIFS;
-			}
-			else
-				return stat;
-			break;
-		case COLLISION:
-			if (this->collisionTime > TIME_INC)
-			{
-				collisionTime -= TIME_INC;
-				return stat;
-			}
-			else
-			{
-				resetVariables(false);
-				stat = DIFS;
 			}
 			break;
 		}
 	}
-	//updateTime(t);
 
 	return stat;
 }
 
-void Tx::sendMessage()
+void Tx::setMessageSize()
 {
-	this->xfer_Time = DATA_FRAME_SIZE + SIFS + ACK;	// slots
+	this->xfer_Time = DATA_FRAME_SIZE;	// slots
 }
 
 void Tx::setBackOff()
@@ -151,7 +129,7 @@ void Tx::setBackOff()
 	this->backOff_val = rand() % (CWo - 1);
 }
 
-void Tx::collision(double k)
+void Tx::collisionBackOff(double k)
 {
 	if (k>10)
 		k = 10;
@@ -162,13 +140,6 @@ void Tx::collision(double k)
 		CW = CWmax;
 
 	this->backOff_val = rand() % CW;
-
-	stat = COLLISION;
-}
-
-void Tx::setCollisionTime()
-{
-	this->collisionTime = SIFS_ORIGINAL + DATA_FRAME_SIZE + ACK_ORIGINAL;
 }
 
 void Tx::resetVariables(bool BO)
@@ -179,12 +150,21 @@ void Tx::resetVariables(bool BO)
 	ACK_val = ACK_ORIGINAL;
 	if (BO)
 		setBackOff();
-	setCollisionTime();
 }
 
 int Tx::getNumACK()
 {
 	return this->numAck;
+}
+
+void Tx::setCollisionVariable(bool col)
+{
+	this->transCollision = col;
+}
+
+int Tx::getCollisionNumber()
+{
+	return this->numCollisions;
 }
 
 void Tx::printVector()    //Debugging to verify Traffic Generator

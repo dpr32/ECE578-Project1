@@ -8,10 +8,6 @@
 
 using namespace std;
 
-double Current_Time;
-
-bool Transmitting; 	// "false" Line is OPEN "true" Line is BUSY
-
 int main()
 {
 
@@ -19,12 +15,7 @@ int main()
 	int A_stat;
 	int C_stat;
 
-	int consecutiveCollision = 0;
-
-	int tot_collisions = 0;
-
-	Current_Time = 0;
-	Transmitting = false;
+	int Current_Time = 0;
 
 	Tx A = Tx(LAMDA_A);
 	Tx C = Tx(LAMDA_C);
@@ -36,22 +27,14 @@ int main()
 
 		if (A_stat == SENDING && C_stat == SENDING) // Collision
 		{
-			++consecutiveCollision;
-			++tot_collisions;
-
-			A.collision(consecutiveCollision);
-			C.collision(consecutiveCollision);
-		}
-		else if (A_stat == SENDING || C_stat == SENDING)
-		{
-			Transmitting = true;
-			consecutiveCollision = 0;
+			A.setCollisionVariable(true);
+			C.setCollisionVariable(true);
 		}
 
 		Current_Time += TIME_INC;
 	}
 
-	cout << "Total collisions: " << tot_collisions << endl;
+	cout << "Total collisions: " << (A.getCollisionNumber() + C.getCollisionNumber()) << endl;
 	cout << "Total A Xmissions: " << A.getNumACK() << endl;
 	cout << "Total C Xmissions: " << C.getNumACK() << endl;
 

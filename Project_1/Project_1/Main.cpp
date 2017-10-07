@@ -10,6 +10,10 @@ using namespace std;
 
 int main()
 {
+	int runtimes = 10;
+	int Ave_collisions = 0;
+	int ave_through_A = 0;
+	int ave_through_C = 0;
 
 	srand(time(0));
 	int A_stat;
@@ -17,26 +21,43 @@ int main()
 
 	int Current_Time = 0;
 
-	Tx A = Tx(LAMDA_A);
-	Tx C = Tx(LAMDA_C);
+	Tx* A;
 
-	while (Current_Time <= TIME_BLOCK)
+	Tx* C;
+
+	for (int i = 0; i < runtimes; ++i)
 	{
-		A_stat = A.recieveTime(Current_Time);
-		C_stat = C.recieveTime(Current_Time);
+		A = new Tx(LAMDA_A);
+		C = new Tx(LAMDA_C);
+		Current_Time = 0;
 
-		if (A_stat == SENDING && C_stat == SENDING) // Collision
+		while (Current_Time <= TIME_BLOCK)
 		{
-			A.setCollisionVariable(true);
-			C.setCollisionVariable(true);
-		}
+			A_stat = A->recieveTime(Current_Time);
+			C_stat = C->recieveTime(Current_Time);
 
-		Current_Time += TIME_INC;
+			if (A_stat == SENDING && C_stat == SENDING) // Collision
+			{
+				A->setCollisionVariable(true);
+				C->setCollisionVariable(true);
+			}
+
+			Current_Time += TIME_INC;
+		}
+		
+		
+		Ave_collisions += (A->getCollisionNumber() + C->getCollisionNumber());
+		ave_through_A += A->getNumACK();
+		ave_through_C += C->getNumACK();
+		delete(A);
+		delete(C);
+		A = NULL;
+		C - NULL;
 	}
 
-	cout << "Total collisions: " << (A.getCollisionNumber() + C.getCollisionNumber()) << endl;
-	cout << "Total A Xmissions: " << A.getNumACK() << endl;
-	cout << "Total C Xmissions: " << C.getNumACK() << endl;
+	cout << "Total collisions: " << (Ave_collisions/ runtimes) << endl;
+	cout << "Total A Xmissions: " << (ave_through_A/ runtimes) << endl;
+	cout << "Total C Xmissions: " << (ave_through_C/ runtimes) << endl;
 
 	system("pause");
 

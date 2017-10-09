@@ -15,7 +15,7 @@ bool Transmitting; 	// "false" Line is OPEN "true" Line is BUSY
 int main()
 {
 
-	srand(time(0));
+	srand(0);
 	int A_stat;
 	int C_stat;
 

@@ -15,7 +15,7 @@ bool Transmitting; 	// "false" Line is OPEN "true" Line is BUSY
 int main()
 {
 
-	srand(time(0));
+	srand(0);
 	int A_stat;
 	int C_stat;
 
@@ -51,8 +51,9 @@ int main()
 		Current_Time += TIME_INC;
 	}
 
-	cout << "Total collisions: " << tot_collisions << endl;
+	cout << "Total A collisions: " << A.getNumCollisions() << endl;
 	cout << "Total A Xmissions: " << A.getNumACK() << endl;
+	cout << "Total C collisions: " << C.getNumCollisions() << endl;
 	cout << "Total C Xmissions: " << C.getNumACK() << endl;
 
 	system("pause");

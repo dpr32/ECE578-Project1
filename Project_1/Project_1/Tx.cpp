@@ -182,6 +182,7 @@ void Tx::collision(double k)
 	this->backOff_val = rand() % CW;
 	DIFS_val = DIFS_ORIGINAL;	// Reset variables
 	stat = COLLISION;
+	++numCollisions;
 }
 
 void Tx::setCollisionTime()
@@ -210,6 +211,11 @@ int Tx::getNumACK()
 void Tx::setState(int state)
 {
 	this->stat = state;
+}
+
+int Tx::getNumCollisions()
+{
+	return this->numCollisions;
 }
 
 void Tx::printVector()    //Debugging to verify Traffic Generator

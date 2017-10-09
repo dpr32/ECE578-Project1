@@ -39,6 +39,7 @@ public:
 	void sendMessage();
 	void setCollisionTime();
 	void setState(int state);
+	int Tx::getNumCollisions();
 	void resetVariables(bool BO);
 	void collision(double col_num);
 	

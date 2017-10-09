@@ -15,16 +15,11 @@ bool Transmitting; 	// "false" Line is OPEN "true" Line is BUSY
 int main()
 {
 
-	srand(time(0));
+	srand(0);
 	int A_stat;
 	int C_stat;
 
 	int consecutiveCollision = 0;
-
-	int runtimes = 10;
-	int Ave_collisions = 0;
-	int ave_through_A = 0;
-	int ave_through_C = 0;
 
 	int tot_collisions = 0;
 
@@ -34,45 +29,36 @@ int main()
 
 	Tx* C;
 
-	for (int i = 0; i < runtimes; ++i)
+	A = new Tx(LAMDA_A);
+	C = new Tx(LAMDA_C);
+	Current_Time = 0;
+
+	while (Current_Time <= TIME_BLOCK)
 	{
-		A = new Tx(LAMDA_A);
-		C = new Tx(LAMDA_C);
-		Current_Time = 0;
+		A_stat = A->recieveTime(Current_Time);
+		C_stat = C->recieveTime(Current_Time);
 
-		while (Current_Time <= TIME_BLOCK)
+		if (A_stat == SENDING && C_stat == SENDING) // Collision
 		{
-			A_stat = A->recieveTime(Current_Time);
-			C_stat = C->recieveTime(Current_Time);
+			++consecutiveCollision;
+			++tot_collisions;
 
-			if (A_stat == SENDING && C_stat == SENDING) // Collision
-			{
-				++consecutiveCollision;
-				++tot_collisions;
-
-				A->collision(consecutiveCollision);
-				C->collision(consecutiveCollision);
-			}
-			else if (A_stat == SENDING || C_stat == SENDING)
-			{
-				Transmitting = true;
-				consecutiveCollision = 0;
-			}
-
-			Current_Time += TIME_INC;
+			A->collision(consecutiveCollision);
+			C->collision(consecutiveCollision);
+		}
+		else if (A_stat == SENDING || C_stat == SENDING)
+		{
+			Transmitting = true;
+			consecutiveCollision = 0;
 		}
 
-		ave_through_A += A->getNumACK();
-		ave_through_C += C->getNumACK();
-		delete(A);
-		delete(C);
-		A = NULL;
-		C - NULL;
+		Current_Time += TIME_INC;
 	}
 
-	cout << "Total collisions: " << (tot_collisions / runtimes) << endl;
-	cout << "Total A Xmissions: " << (ave_through_A / runtimes) << endl;
-	cout << "Total C Xmissions: " << (ave_through_C / runtimes) << endl;
+	cout << "Total A collisions: " << A->getNumCollisions() << endl;
+	cout << "Total A Xmissions: " << A->getNumACK() << endl;
+	cout << "Total C collisions: " << C->getNumCollisions() << endl;
+	cout << "Total C Xmissions: " << C->getNumACK() << endl;
 
 	system("pause");
 

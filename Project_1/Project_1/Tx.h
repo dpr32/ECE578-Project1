@@ -36,6 +36,7 @@ public:
 	void setBackOff();
 	void sendMessage();
 	void setCollisionTime();
+	int  getNumCollisions();
 	void resetVariables(bool BO);
 	void collision(double col_num);
 	

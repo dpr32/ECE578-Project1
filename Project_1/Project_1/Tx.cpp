@@ -164,6 +164,12 @@ void Tx::collision(double k)
 	this->backOff_val = rand() % CW;
 
 	stat = COLLISION;
+	++numCollisions;
+}
+
+int Tx::getNumCollisions()
+{
+	return this->numCollisions;
 }
 
 void Tx::setCollisionTime()
